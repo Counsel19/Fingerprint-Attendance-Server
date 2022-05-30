@@ -15,13 +15,23 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
-app.use(
-  cors({
-    origin: "http://localhost:3000",
-    optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
-    credentials: true,
-  })
-);
+
+var allowlist = ["http://localhost:3000", "http://192.168.8.198:3000"];
+var corsOptionsDelegate = function (req, callback) {
+  var corsOptions;
+  if (allowlist.indexOf(req.header("Origin")) !== -1) {
+    corsOptions = {
+      origin: true,
+      optionsSuccessStatus: 200, 
+      credentials: true,
+    }; 
+  } else {
+    corsOptions = { origin: false }; 
+  }
+  callback(null, corsOptions); 
+};
+
+app.use(cors(corsOptionsDelegate));
 
 //Confingure env file and require connection file
 dotenv.config({ path: "./config.env" });

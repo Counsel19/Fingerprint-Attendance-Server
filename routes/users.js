@@ -1,6 +1,5 @@
 const express = require("express");
 const router = express.Router();
-const upload = require("../utils/multer");
 const cloudinary = require("../utils/cloudinary");
 const {
   verifyTokenAndAuthorization,
@@ -42,14 +41,13 @@ router.put(
   verifyTokenAndAuthorization,
   async (req, res) => {
     try {
-
       const user = await Users.findOne({
         _id: req.params.id,
       });
 
       console.log("req.body", req.body);
       console.log("user", user);
-      
+
       if (req.body.currentPassword) {
         const isMatch = await bcryptjs.compare(
           req.body.currentPassword,
@@ -88,32 +86,54 @@ router.put("/:id", verifyTokenAndAuthorization, async (req, res) => {
   try {
     const uploader = async (path) =>
       await cloudinary.uploads(path, "ProfileImage");
-    const fileStr = req.body.image;
+    if (req.body.image) {
+      const fileStr = req.body.image;
 
-    const { url, id } = await uploader(fileStr);
+      const { url, id } = await uploader(fileStr);
+      const edittedUser = {
+        firstname: req.body.firstname,
+        lastname: req.body.lastname,
+        department: req.body.department,
+        faculty: req.body.faculty,
+        rank: req.body.rank,
+        email: req.body.email,
+        phone: req.body.phone,
+        gender: req.body.gender,
+        courses: req.body.courses,
+        avatar: url,
+        cloudinary_id: id,
+      };
 
-    const edittedUser = {
-      firstname: req.body.firstname,
-      lastname: req.body.lastname,
-      department: req.body.department,
-      faculty: req.body.faculty,
-      rank: req.body.rank,
-      email: req.body.email,
-      phone: req.body.phone,
-      gender: req.body.gender,
-      courses: req.body.courses,
-      avatar: url,
-      cloudinary_id: id,
-    };
+      const updatedUser = await Users.findByIdAndUpdate(
+        req.params.id,
+        { $set: edittedUser },
+        {
+          new: true,
+        }
+      );
+      res.status(200).json(updatedUser);
+    } else {
+      const edittedUser = {
+        firstname: req.body.firstname,
+        lastname: req.body.lastname,
+        department: req.body.department,
+        faculty: req.body.faculty,
+        rank: req.body.rank,
+        email: req.body.email,
+        phone: req.body.phone,
+        gender: req.body.gender,
+        courses: req.body.courses,
+      };
 
-    const updatedUser = await Users.findByIdAndUpdate(
-      req.params.id,
-      { $set: edittedUser },
-      {
-        new: true,
-      }
-    );
-    res.status(200).json(updatedUser);
+      const updatedUser = await Users.findByIdAndUpdate(
+        req.params.id,
+        { $set: edittedUser },
+        {
+          new: true,
+        }
+      );
+      res.status(200).json(updatedUser);
+    }
   } catch (error) {
     res.status(400).json(error);
     console.log(error);
@@ -140,29 +160,48 @@ router.post("/", verifyTokenAndAdmin, async (req, res) => {
   try {
     const uploader = async (path) =>
       await cloudinary.uploads(path, "ProfileImage");
-    const fileStr = req.body.image;
-    console.log("fileStr", fileStr);
-    const { url, id } = await uploader(fileStr);
+    if (req.body.image) {
+      const fileStr = req.body.image;
 
-    //Get body or Data
-    const createUser = new Users({
-      firstname: req.body.firstname,
-      lastname: req.body.lastname,
-      department: req.body.department,
-      faculty: req.body.faculty,
-      rank: req.body.rank,
-      email: req.body.email,
-      password: req.body.password,
-      phone: req.body.phone,
-      gender: req.body.gender,
-      courses: req.body.courses,
-      avatar: url,
-      cloudinary_id: id,
-    });
+      const { url, id } = await uploader(fileStr);
+      //Get body or Data
+      const createUser = new Users({
+        firstname: req.body.firstname,
+        lastname: req.body.lastname,
+        department: req.body.department,
+        faculty: req.body.faculty,
+        rank: req.body.rank,
+        email: req.body.email,
+        password: req.body.password,
+        phone: req.body.phone,
+        gender: req.body.gender,
+        courses: req.body.courses,
+        avatar: url,
+        cloudinary_id: id,
+      });
 
-    const created = await createUser.save();
+      const created = await createUser.save();
 
-    res.status(200).send("User Created");
+      res.status(200).send("User Created");
+    } else {
+      //Get body or Data
+      const createUser = new Users({
+        firstname: req.body.firstname,
+        lastname: req.body.lastname,
+        department: req.body.department,
+        faculty: req.body.faculty,
+        rank: req.body.rank,
+        email: req.body.email,
+        password: req.body.password,
+        phone: req.body.phone,
+        gender: req.body.gender,
+        courses: req.body.courses,
+      });
+
+      const created = await createUser.save();
+
+      res.status(200).send("User Created");
+    }
   } catch (error) {
     res.status(400).send(error);
     console.log(error);

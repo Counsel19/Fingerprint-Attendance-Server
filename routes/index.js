@@ -1,12 +1,10 @@
 const express = require("express");
 const router = express.Router();
 const bcryptjs = require("bcryptjs");
-const { verifyToken } = require("../middleware/authMiddleware")
+const { verifyToken } = require("../middleware/authMiddleware");
 
 //Reqiure Model
 const Users = require("../models/userSchema");
-
-
 
 router.get("/logout", (req, res) => {
   res.clearCookie("jwt", { path: "/" });
@@ -29,16 +27,15 @@ router.post("/login", async (req, res) => {
       if (isMatch) {
         //Generate Token which is defined in users Schema
         const token = await user.generateToken();
-        
+
         res.cookie("jwt", `Bearer ${token}`, {
           //Token Expires in 24hrs
           expires: new Date(Date.now() + 86400000),
           httpOnly: true,
         });
+        const { password, ...others } = user;
 
-        const { password, ...others } = user
-
-        res.status(200).json({ status: 200, data: {...others} });
+        res.status(200).json({ status: 200, data: { ...others } });
       } else {
         res.status(400).json({
           status: 400,
@@ -60,21 +57,18 @@ router.post("/login", async (req, res) => {
   }
 });
 
-
 router.get("/request-login", verifyToken, async (req, res) => {
-  
-  if(req.user._id){
+  if (req.user._id) {
+    const user = await Users.findOne({
+      _id: req.user._id,
+    });
 
-    const user  = await Users.findOne({
-      _id: req.user._id
-    })
-   
-    if(user){
-      const {password, tokens, __v, ...others } = user._doc
-     
-      res.status(200).json(others)
+    if (user) {
+      const { password, tokens, __v, ...others } = user._doc;
+
+      res.status(200).json(others);
     }
   }
-} )
+});
 
 module.exports = router;
