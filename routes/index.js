@@ -32,7 +32,6 @@ router.post("/login", async (req, res) => {
           //Token Expires in 24hrs
           expires: new Date(Date.now() + 86400000),
           httpOnly: true,
-          sameSite: "none",
         });
         const { password, ...others } = user;
 
