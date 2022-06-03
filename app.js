@@ -12,7 +12,7 @@ app.use(express.urlencoded({ limit: "50mb", extended: false }));
 app.use(cookieParser());
 
 var allowlist = [
-  "https://fingerprintattendance.netlify.app/",
+  "https://fingerprintattendance.netlify.app",
 ];
 var corsOptionsDelegate = function (req, callback) {
   var corsOptions;
