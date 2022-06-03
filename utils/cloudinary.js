@@ -15,6 +15,6 @@ exports.uploads = async (file, folder) => {
       folder: folder
     })
 
-    console.log("uploadResponse", uploadResponse)
+    
      return uploadResponse;
 }

@@ -24,8 +24,12 @@ router.get("/:id", verifyTokenAndAuthorization, (req, res) => {
   try {
     Users.findOne({ _id: req.params.id }, function (error, userDoc) {
       if (!error) {
+       if(userDoc.length !== 0) {
         const { password, tokens, __v, ...others } = userDoc._doc;
         res.status(200).json(others);
+       }else{
+         res.status(400).json("Invalid Credentials")
+       }
       } else {
         console.log(error);
       }
@@ -44,9 +48,6 @@ router.put(
       const user = await Users.findOne({
         _id: req.params.id,
       });
-
-      console.log("req.body", req.body);
-      console.log("user", user);
 
       if (req.body.currentPassword) {
         const isMatch = await bcryptjs.compare(
@@ -89,7 +90,7 @@ router.put("/:id", verifyTokenAndAuthorization, async (req, res) => {
     if (req.body.image) {
       const fileStr = req.body.image;
 
-      const { url, id } = await uploader(fileStr);
+      const { secure_url, public_id } = await uploader(fileStr);
       const edittedUser = {
         firstname: req.body.firstname,
         lastname: req.body.lastname,
@@ -100,8 +101,8 @@ router.put("/:id", verifyTokenAndAuthorization, async (req, res) => {
         phone: req.body.phone,
         gender: req.body.gender,
         courses: req.body.courses,
-        avatar: url,
-        cloudinary_id: id,
+        avatar: secure_url,
+        cloudinary_id: public_id,
       };
 
       const updatedUser = await Users.findByIdAndUpdate(
@@ -163,7 +164,7 @@ router.post("/", verifyTokenAndAdmin, async (req, res) => {
     if (req.body.image) {
       const fileStr = req.body.image;
 
-      const { url, id } = await uploader(fileStr);
+      const { secure_url, public_id } = await uploader(fileStr);
       //Get body or Data
       const createUser = new Users({
         firstname: req.body.firstname,
@@ -176,8 +177,8 @@ router.post("/", verifyTokenAndAdmin, async (req, res) => {
         phone: req.body.phone,
         gender: req.body.gender,
         courses: req.body.courses,
-        avatar: url,
-        cloudinary_id: id,
+        avatar: secure_url,
+        cloudinary_id: public_id,
       });
 
       const created = await createUser.save();

@@ -22,13 +22,17 @@ router.get("/:course_code", (req, res) => {
   try {
     Courses.findOne({ course_code: req.params.course_code }, function (error, courseDoc) {
       if (!error) {
-        res.status(200).json(courseDoc);
+        if (courseDoc) {
+          res.status(200).json(courseDoc);
+        } else {
+          res.status(400).json("Invalid Credentials");
+        }
       } else {
         console.log(error);
       }
     });
   } catch (error) {
-    res.status(400).send(error);
+    res.status(400).json(error);
     console.log(error);
   }
 });
@@ -45,9 +49,9 @@ router.post("/", verifyTokenAndAdmin, async (req, res) => {
 
     const created = await createCourse.save();
 
-    res.status(200).send("Course Created");
+    res.status(200).json("Course Created");
   } catch (error) {
-    res.status(400).send(error);
+    res.status(400).json(error);
     console.log(error);
   }
 });

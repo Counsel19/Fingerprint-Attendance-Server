@@ -24,7 +24,11 @@ router.get("/:id", verifyTokenAndAuthorization, (req, res) => {
       { _id: req.query.studentId },
       function (error, studentDoc) {
         if (!error) {
-          res.status(200).json(studentDoc);
+          if (studentDoc) {
+            res.status(200).json(studentDoc);
+          } else {
+            res.status(400).json("Invalid Credentials");
+          }
         } else {
           console.log(error);
         }
@@ -50,14 +54,19 @@ router.get(
         { reg_number: req.params.reg_number },
         function (error, studentDoc) {
           if (!error) {
-            res.status(200).json(studentDoc);
+            if (studentDoc) {
+              res.status(200).json(studentDoc);
+            } else {
+              res.status(400).json("Invalid Registration Number");
+            }
           } else {
+            res.status(400).json("Invalid Registration Number");
             console.log(error);
           }
         }
       );
     } catch (error) {
-      res.status(400).send(error);
+      res.status(400).json(error);
       console.log(error);
     }
   }
@@ -71,7 +80,7 @@ router.post("/", verifyTokenAndAdmin, async (req, res) => {
     if (req.body.image) {
       const fileStr = req.body.image;
 
-      const { url, id } = await uploader(fileStr);
+      const { secure_url, public_id } = await uploader(fileStr);
       const createStudent = new Students({
         firstname: req.body.firstname,
         middlename: req.body.middlename,
@@ -82,15 +91,14 @@ router.post("/", verifyTokenAndAdmin, async (req, res) => {
         gender: req.body.gender,
         level: req.body.level,
         fingerprint: req.body.fingerprint,
-        avatar: url,
-        cloudinary_id: id,
+        avatar: secure_url,
+        cloudinary_id: public_id,
       });
 
-      console.log(createStudent);
 
       const created = await createStudent.save();
 
-      res.status(200).send("User Created");
+      res.status(200).json("User Created");
     } else {
       const createStudent = new Students({
         firstname: req.body.firstname,
@@ -104,12 +112,25 @@ router.post("/", verifyTokenAndAdmin, async (req, res) => {
         fingerprint: req.body.fingerprint,
       });
 
-      console.log(createStudent);
-
       const created = await createStudent.save();
 
-      res.status(200).send("User Created");
+      res.status(200).json("User Created");
     }
+  } catch (error) {
+    res.status(400).send(error);
+    console.log(error);
+  }
+});
+
+router.delete("/:id", verifyTokenAndAdmin, (req, res) => {
+  try {
+    Students.findByIdAndRemove({ _id: req.params.id }, function (error, doc) {
+      if (!error) {
+        res.status(204).json({
+          message: "Success",
+        });
+      }
+    });
   } catch (error) {
     res.status(400).send(error);
     console.log(error);

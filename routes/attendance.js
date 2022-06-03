@@ -8,9 +8,13 @@ const {
 const Attendance = require("../models/attendance");
 
 router.get("/", verifyTokenAndAdmin, (req, res) => {
-  Attendance.find(function (error, docs) {
+  Attendance.find(function (error, attendanceDoc) {
     if (!error) {
-      res.status(200).json(docs);
+      if (attendanceDoc) {
+        res.status(200).json(attendanceDoc);
+      } else {
+        res.status(400).json("Error");
+      }
     } else {
       console.error(error);
     }
@@ -19,13 +23,20 @@ router.get("/", verifyTokenAndAdmin, (req, res) => {
 
 router.get("/:id", verifyTokenAndAuthorization, (req, res) => {
   try {
-    Attendance.findOne({ _id: req.query.attendanceId }, function (error, attendanceDoc) {
-      if (!error) {
-        res.status(200).json(attendanceDoc);
-      } else {
-        console.log(error);
+    Attendance.findOne(
+      { _id: req.query.attendanceId },
+      function (error, attendanceDoc) {
+        if (!error) {
+          if (attendanceDoc) {
+            res.status(200).json(attendanceDoc);
+          } else {
+            res.status(400).json("Invalid Credentials");
+          }
+        } else {
+          console.log(error);
+        }
       }
-    });
+    );
   } catch (error) {
     res.status(400).send(error);
     console.log(error);
@@ -38,7 +49,6 @@ router.get("/user/:id", verifyTokenAndAuthorization, (req, res) => {
       { user_docId: req.params.id },
       function (error, attendanceDoc) {
         if (!error) {
-          console.log("attendanceDoc", attendanceDoc)
           res.status(200).json(attendanceDoc);
         } else {
           console.log(error);
@@ -105,7 +115,9 @@ router.get("/after/:date", verifyTokenAndAdmin, (req, res) => {
       { date: { $gte: req.params.date } },
       function (error, attendanceDoc) {
         if (!error) {
-          res.status(200).json(attendanceDoc);
+         
+            res.status(200).json(attendanceDoc);
+          
         } else {
           console.log(error);
         }
@@ -164,13 +176,7 @@ router.get(
   }
 );
 
-router.get(
-  "/student/:reg_number",
-  verifyTokenAndAuthorization,
-  (req, res) => {}
-);
-
-router.post("/", async (req, res) => {
+router.post("/", verifyTokenAndAuthorization, async (req, res) => {
   try {
     //Get body or Data
     const createAttendance = new Attendance({
