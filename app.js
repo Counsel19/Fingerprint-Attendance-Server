@@ -34,7 +34,7 @@ app.use(cors(corsOptionsDelegate));
 //Confingure env file and require connection file
 dotenv.config({ path: "./config.env" });
 require("./db/conn");
-const port = process.env.PORT;
+const port = process.env.PORT || 3001;
 
 //use user routes
 app.use("/auth", require("./routes/index"));
