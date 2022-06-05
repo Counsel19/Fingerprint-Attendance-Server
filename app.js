@@ -1,4 +1,3 @@
-
 const express = require("express");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
@@ -12,11 +11,12 @@ app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ limit: "50mb", extended: false }));
 app.use(cookieParser());
 
-var allowlist = [
-  "https://fingerprintattendance.netlify.app/", "http://localhost:3000/"
+let allowlist = [
+  "https://fingerprintattendance.netlify.app/",
+  "http://localhost:3000/",
 ];
-var corsOptionsDelegate = function (req, callback) {
-  var corsOptions;
+let corsOptionsDelegate = function (req, callback) {
+  let corsOptions;
   if (allowlist.indexOf(req.header("Origin")) !== -1) {
     corsOptions = {
       origin: true,
