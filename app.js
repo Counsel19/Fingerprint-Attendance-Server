@@ -1,3 +1,4 @@
+const dotenv = require("dotenv");
 const express = require("express");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
@@ -12,7 +13,7 @@ app.use(express.urlencoded({ limit: "50mb", extended: false }));
 app.use(cookieParser());
 
 let allowlist = [
-  "https://fingerprintattendance.netlify.app",
+  "https://biometricattendance.netlify.app",
   "http://localhost:3000",
 ];
 let corsOptionsDelegate = function (req, callback) {
@@ -32,6 +33,7 @@ let corsOptionsDelegate = function (req, callback) {
 app.use(cors(corsOptionsDelegate));
 
 //Confingure env file and require connection file
+dotenv.config({ path: "./config.env" });
 require("./db/conn");
 const port = process.env.PORT || 3001;
 
