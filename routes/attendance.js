@@ -176,7 +176,7 @@ router.get(
   }
 );
 
-router.post("/", verifyTokenAndAuthorization, async (req, res) => {
+router.post("/:id", verifyTokenAndAuthorization, async (req, res) => {
   try {
     //Get body or Data
     const createAttendance = new Attendance({

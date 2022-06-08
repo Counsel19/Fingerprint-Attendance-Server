@@ -1,4 +1,4 @@
-// const dotenv = require("dotenv");
+const dotenv = require("dotenv");
 const express = require("express");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
@@ -33,7 +33,7 @@ let corsOptionsDelegate = function (req, callback) {
 app.use(cors(corsOptionsDelegate));
 
 //Confingure env file and require connection file
-// dotenv.config({ path: "./config.env" });
+dotenv.config({ path: "./config.env" });
 require("./db/conn");
 const port = process.env.PORT || 3001;
 

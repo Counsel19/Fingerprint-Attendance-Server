@@ -56,6 +56,7 @@ router.put(
         );
 
         if (isMatch) {
+        
           if (req.body.newPassword) {
             req.body.password = bcryptjs.hashSync(req.body.newPassword, 10);
 
@@ -68,13 +69,13 @@ router.put(
             );
             res.status(200).json(updatedUser);
           } else {
-            res.status(400).json("Fields Missing");
+            res.status(400).json("Field(s) Missing");
           }
         } else {
-          res.status(400).json("Fields Missing");
+          res.status(400).json("Current Password Incorrect");
         }
       } else {
-        res.status(400).json("Current Password Incorrect");
+        res.status(400).json("Field(s) Missing");
       }
     } catch (error) {
       res.status(400).json(error);
