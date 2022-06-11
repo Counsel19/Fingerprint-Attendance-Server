@@ -33,7 +33,8 @@ router.post("/login", async (req, res) => {
           expires: new Date(Date.now() + 86400000),
           httpOnly: true,
           sameSite: "none",
-          secure: true
+          secure: true,
+          domain: 'https://biometricattendance.netlify.app'
         });
         const { password, ...others } = user;
 
