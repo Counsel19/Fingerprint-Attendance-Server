@@ -40,6 +40,26 @@ router.get("/:id", verifyTokenAndAuthorization, (req, res) => {
   }
 });
 
+router.get("/user/:id/:docId", verifyTokenAndAuthorization, (req, res) => {
+  try {
+    Users.findOne({ _id: req.params.docId }, function (error, userDoc) {
+      if (!error) {
+       if(userDoc.length !== 0) {
+        const { password, tokens, __v, ...others } = userDoc._doc;
+        res.status(200).json(others);
+       }else{
+         res.status(400).json("Invalid Credentials")
+       }
+      } else {
+        console.log(error);
+      }
+    });
+  } catch (error) {
+    res.status(400).send(error);
+    console.log(error);
+  }
+});
+
 router.put(
   "/:id/change-password",
   verifyTokenAndAuthorization,

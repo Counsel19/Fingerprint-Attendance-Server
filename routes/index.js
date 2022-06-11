@@ -7,7 +7,7 @@ const { verifyToken } = require("../middleware/authMiddleware");
 const Users = require("../models/userSchema");
 
 router.get("/logout", (req, res) => {
-  res.clearCookie("jwt", { path: "/" });
+  res.cookie("jwt", "", {maxAge: 1});
   res.status(200).send("User Logged Out");
 });
 

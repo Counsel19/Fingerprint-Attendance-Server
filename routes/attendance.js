@@ -7,7 +7,7 @@ const {
 
 const Attendance = require("../models/attendance");
 
-router.get("/", verifyTokenAndAdmin, (req, res) => {
+router.get("/", (req, res) => {
   Attendance.find(function (error, attendanceDoc) {
     if (!error) {
       if (attendanceDoc) {
@@ -190,7 +190,7 @@ router.post("/:id", verifyTokenAndAuthorization, async (req, res) => {
 
     const created = await createAttendance.save();
 
-    res.status(200).send("User Created");
+    res.status(200).json("Attendance Submitted");
   } catch (error) {
     res.status(400).send(error);
     console.log(error);

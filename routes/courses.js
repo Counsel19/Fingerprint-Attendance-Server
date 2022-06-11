@@ -9,7 +9,7 @@ const {
 const Courses = require("../models/courses");
 
 router.get("/", verifyTokenAndAdmin, (req, res) => {
-    Courses.find(function (error, docs) {
+  Courses.find(function (error, docs) {
     if (!error) {
       res.status(200).json(docs);
     } else {
@@ -18,24 +18,27 @@ router.get("/", verifyTokenAndAdmin, (req, res) => {
   });
 });
 
-router.get("/:course_code", (req, res) => {
-  try {
-    Courses.findOne({ course_code: req.params.course_code }, function (error, courseDoc) {
-      if (!error) {
-        if (courseDoc) {
-          res.status(200).json(courseDoc);
-        } else {
-          res.status(400).json("Invalid Credentials");
+router.get(
+  "/:course_code/user/:id",
+  verifyTokenAndAuthorization,
+  (req, res) => {
+    try {
+      Courses.findOne(
+        { course_code: req.params.course_code },
+        function (error, courseDoc) {
+          if (!error) {
+            res.status(200).json(courseDoc);
+          } else {
+            console.log(error);
+          }
         }
-      } else {
-        console.log(error);
-      }
-    });
-  } catch (error) {
-    res.status(400).json(error);
-    console.log(error);
+      );
+    } catch (error) {
+      res.status(400).json(error);
+      console.log(error);
+    }
   }
-});
+);
 
 router.post("/", verifyTokenAndAdmin, async (req, res) => {
   try {
