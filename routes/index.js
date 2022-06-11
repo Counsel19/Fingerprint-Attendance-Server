@@ -34,7 +34,7 @@ router.post("/login", async (req, res) => {
           httpOnly: true,
           sameSite: "none",
           secure: true,
-          domain: '.biometricattendance.netlify.app'
+          domain: 'biometricattendance.netlify.app'
         });
         const { password, ...others } = user;
 
