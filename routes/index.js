@@ -7,7 +7,13 @@ const { verifyToken } = require("../middleware/authMiddleware");
 const Users = require("../models/userSchema");
 
 router.get("/logout", (req, res) => {
-  res.cookie("jwt", "", {maxAge: 1});
+  res.cookie("jwt", "", {
+    //Token Expires in 24hrs
+    maxAge: 1,
+    httpOnly: true,
+    sameSite: "none",
+    secure: true,
+  });
   res.status(200).send("User Logged Out");
 });
 
@@ -34,7 +40,6 @@ router.post("/login", async (req, res) => {
           httpOnly: true,
           sameSite: "none",
           secure: true,
-          domain: 'biometricattendance.netlify.app'
         });
         const { password, ...others } = user;
 
