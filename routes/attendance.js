@@ -115,9 +115,7 @@ router.get("/after/:date", verifyTokenAndAdmin, (req, res) => {
       { date: { $gte: req.params.date } },
       function (error, attendanceDoc) {
         if (!error) {
-         
-            res.status(200).json(attendanceDoc);
-          
+          res.status(200).json(attendanceDoc);
         } else {
           console.log(error);
         }
@@ -196,5 +194,53 @@ router.post("/:id", verifyTokenAndAuthorization, async (req, res) => {
     console.log(error);
   }
 });
+
+router.delete(
+  "/:id/deletedId/:deletedId",
+  verifyTokenAndAdmin,
+  async (req, res) => {
+    const count = Attendance.deleteMany(
+      { user_docId: req.params.deletedId },
+      function (error, doc) {
+        if (!error) {
+          res.status(204).json({
+            message: "Success",
+          });
+        }
+      }
+    );
+  }
+);
+
+router.delete(
+  "/:id/studentId/:studentId",
+  verifyTokenAndAdmin,
+  async (req, res) => {
+    try {
+      Attendance.find(
+        { students_present: req.params.studentId },
+        function (error, doc) {
+          if (!error) {
+            doc.map(async (items) => {
+              let id = items._id;
+              const students = items.students_present.filter(
+                (item) => item != req.params.studentId
+              );
+              const data = await Attendance.findOneAndUpdate(
+                { _id: id },
+                { students_present: students }
+              );
+            });
+            res.status(204).json({
+              message: "Success",
+            });
+          }
+        }
+      );
+    } catch (error) {
+      console.log(error);
+    }
+  }
+);
 
 module.exports = router;

@@ -42,6 +42,7 @@ router.get("/:id", verifyTokenAndAuthorization, (req, res) => {
 
 router.get("/user/:id/:docId", verifyTokenAndAuthorization, (req, res) => {
   try {
+
     Users.findOne({ _id: req.params.docId }, function (error, userDoc) {
       if (!error) {
        if(userDoc.length !== 0) {
@@ -162,9 +163,9 @@ router.put("/:id", verifyTokenAndAuthorization, async (req, res) => {
   }
 });
 
-router.delete("/:id", verifyTokenAndAdmin, (req, res) => {
+router.delete("/:id/deletedId/:deletedId", verifyTokenAndAdmin, (req, res) => {
   try {
-    Users.findByIdAndRemove({ _id: req.params.id }, function (error, doc) {
+    Users.findByIdAndRemove({ _id: req.params.deletedId }, function (error, doc) {
       if (!error) {
         res.status(204).json({
           message: "Success",

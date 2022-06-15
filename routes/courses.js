@@ -18,6 +18,16 @@ router.get("/", verifyTokenAndAdmin, (req, res) => {
   });
 });
 
+router.get("/user/:id", verifyTokenAndAuthorization, (req, res) => {
+  Courses.find(function (error, docs) {
+    if (!error) {
+      res.status(200).json(docs);
+    } else {
+      console.error(error);
+    }
+  });
+});
+
 router.get(
   "/:course_code/user/:id",
   verifyTokenAndAuthorization,

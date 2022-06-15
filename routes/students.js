@@ -95,7 +95,6 @@ router.post("/", verifyTokenAndAdmin, async (req, res) => {
         cloudinary_id: public_id,
       });
 
-
       const created = await createStudent.save();
 
       res.status(200).json("User Created");
@@ -122,15 +121,20 @@ router.post("/", verifyTokenAndAdmin, async (req, res) => {
   }
 });
 
-router.delete("/:id", verifyTokenAndAdmin, (req, res) => {
+router.delete("/:id/deletedId/:deletedId", verifyTokenAndAdmin, (req, res) => {
   try {
-    Students.findByIdAndRemove({ _id: req.params.id }, function (error, doc) {
-      if (!error) {
-        res.status(204).json({
-          message: "Success",
-        });
+    Students.findByIdAndRemove(
+      { _id: req.params.deletedId },
+      function (error, doc) {
+        if (!error) {
+          res.status(204).json({
+            message: "Success",
+          });
+        }
       }
-    });
+    );
+
+    
   } catch (error) {
     res.status(400).send(error);
     console.log(error);

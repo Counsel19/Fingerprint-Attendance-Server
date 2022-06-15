@@ -8,7 +8,7 @@ const Users = require("../models/userSchema");
 
 router.get("/logout", (req, res) => {
   res.cookie("jwt", "", {
-    //Token Expires in 24hrs
+    
     maxAge: 1,
     httpOnly: true,
     sameSite: "none",
